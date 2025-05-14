@@ -21,6 +21,12 @@ target/
 *.ipr
 out/
 
+### Android Studio ###
+local.properties
+captures/
+.externalNativeBuild
+.cxx
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -42,3 +48,6 @@ out/
 
 ### Node ###
 node_modules/
+
+### Gradle ###
+!gradle/wrapper/gradle-wrapper.jar
