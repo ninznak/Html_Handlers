@@ -90,7 +90,7 @@ public class Server {
     }
 
     private void handleDefault(Request request, BufferedOutputStream out) throws IOException {
-        final var filePath = Path.of(".", "public", request.getPath());
+        final var filePath = Path.of("01_web/http-server/", "public", request.getPath());
         if (!Files.exists(filePath)) {
             sendResponse(out, "404 Not Found", null, 0);
             return;
