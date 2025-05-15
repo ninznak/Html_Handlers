@@ -22,14 +22,12 @@ public class Main {
             final var in = new BufferedInputStream(socket.getInputStream());
             final var out = new BufferedOutputStream(socket.getOutputStream());
         ) {
-          // лимит на request line + заголовки
           final var limit = 4096;
 
           in.mark(limit);
           final var buffer = new byte[limit];
           final var read = in.read(buffer);
 
-          // ищем request line
           final var requestLineDelimiter = new byte[]{'\r', '\n'};
           final var requestLineEnd = indexOf(buffer, requestLineDelimiter, 0, read);
           if (requestLineEnd == -1) {
@@ -37,7 +35,6 @@ public class Main {
             continue;
           }
 
-          // читаем request line
           final var requestLine = new String(Arrays.copyOf(buffer, requestLineEnd)).split(" ");
           if (requestLine.length != 3) {
             badRequest(out);
@@ -58,7 +55,6 @@ public class Main {
           }
           System.out.println(path);
 
-          // ищем заголовки
           final var headersDelimiter = new byte[]{'\r', '\n', '\r', '\n'};
           final var headersStart = requestLineEnd + requestLineDelimiter.length;
           final var headersEnd = indexOf(buffer, headersDelimiter, headersStart, read);
@@ -67,19 +63,15 @@ public class Main {
             continue;
           }
 
-          // отматываем на начало буфера
           in.reset();
-          // пропускаем requestLine
           in.skip(headersStart);
 
           final var headersBytes = in.readNBytes(headersEnd - headersStart);
           final var headers = Arrays.asList(new String(headersBytes).split("\r\n"));
           System.out.println(headers);
 
-          // для GET тела нет
           if (!method.equals(GET)) {
             in.skip(headersDelimiter.length);
-            // вычитываем Content-Length, чтобы прочитать body
             final var contentLength = extractHeader(headers, "Content-Length");
             if (contentLength.isPresent()) {
               final var length = Integer.parseInt(contentLength.get());
@@ -122,7 +114,6 @@ public class Main {
     out.flush();
   }
 
-  // from google guava with modifications
   private static int indexOf(byte[] array, byte[] target, int start, int max) {
     outer:
     for (int i = start; i < max - target.length + 1; i++) {
