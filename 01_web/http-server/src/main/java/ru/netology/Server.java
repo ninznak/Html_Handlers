@@ -48,7 +48,6 @@ public class Server {
 
             var methodHandlers = handlers.get(request.getMethod());
             if (methodHandlers != null) {
-                // Ищем обработчик только по пути (без query-параметров)
                 var handler = methodHandlers.get(request.getPath());
                 if (handler != null) {
                     handler.handle(request, out);

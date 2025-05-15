@@ -5,7 +5,6 @@ public class Main {
 
         final var server = new Server();
 
-        // Обработчик для "/search" с query-параметрами
         server.addHandler("GET", "/search", (request, out) -> {
             String query = request.getQueryParam("q").orElse("default");
             String response = "Search results for: " + query;
