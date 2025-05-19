@@ -56,7 +56,7 @@ public class Server {
             }
             handleDefault(request, out);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -68,14 +68,18 @@ public class Server {
         if (parts.length != 3) return null;
 
         final var method = parts[0];
-        final var path = parts[1];
+        final var uri = parts[1];
+        final var pathAndQuery = uri.split("\\?", 2);
+        final var path = pathAndQuery[0];
+        final var queryString = pathAndQuery.length > 1 ? pathAndQuery[1] : null;
 
         var headers = new HashMap<String, String>();
         String line;
         while (!(line = in.readLine()).isEmpty()) {
             var index = line.indexOf(":");
             if (index > 0) {
-                headers.put(line.substring(0, index).trim(), line.substring(index + 1).trim());
+                headers.put(line.substring(0, index).trim(),
+                        line.substring(index + 1).trim());
             }
         }
 
@@ -86,7 +90,7 @@ public class Server {
             }
         }
 
-        return new Request(method, path, headers, body.toString());
+        return new Request(method, path, queryString, headers, body.toString());
     }
 
     private void handleDefault(Request request, BufferedOutputStream out) throws IOException {
