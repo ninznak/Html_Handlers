@@ -1,20 +1,12 @@
 package ru.netology.config;
 
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import ru.netology.controller.PostController;
-import ru.netology.repository.PostRepository;
-import ru.netology.service.PostService;
 
+@Configuration
+@EnableWebMvc
+@ComponentScan(basePackageClasses = {PostController.class})
 public class AppConfig {
-
-    public PostRepository postRepository() {
-        return new PostRepository();
-    }
-
-    public PostService postService() {
-        return new PostService(postRepository());
-    }
-
-    public PostController postController() {
-        return new PostController(postService());
-    }
 }
