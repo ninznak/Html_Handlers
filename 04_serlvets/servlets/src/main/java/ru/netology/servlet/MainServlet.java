@@ -7,6 +7,7 @@ import ru.netology.exception.NotFoundException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class MainServlet extends HttpServlet {
     private PostController controller;
@@ -19,12 +20,11 @@ public class MainServlet extends HttpServlet {
         context = new AnnotationConfigWebApplicationContext();
         context.scan("ru.netology");
         context.refresh();
-
         controller = context.getBean(PostController.class);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) {
+    protected void service(HttpServletRequest req, HttpServletResponse resp){
         try {
             final var path = req.getRequestURI();
             final var method = req.getMethod();
@@ -57,7 +57,12 @@ public class MainServlet extends HttpServlet {
     }
 
     private long extractIdFromPath(String path) {
-        return Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
+        String idStr = path.substring(path.lastIndexOf("/") + 1);
+        try {
+            return Long.parseLong(idStr);
+        } catch (NumberFormatException e) {
+            throw new NotFoundException("Неверный формат ID: " + idStr);
+        }
     }
 
     @Override
