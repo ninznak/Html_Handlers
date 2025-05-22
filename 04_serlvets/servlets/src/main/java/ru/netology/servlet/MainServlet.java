@@ -10,13 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 
 public class MainServlet extends HttpServlet {
     private PostController controller;
+    private AnnotationConfigWebApplicationContext context;
     private static final String API_POSTS_PATH = "/api/posts";
     private static final String API_POSTS_ID_PATH = "/api/posts/\\d+";
 
     @Override
     public void init() {
-        var context = new AnnotationConfigWebApplicationContext();
-        context.scan("ru.netology.config");
+        context = new AnnotationConfigWebApplicationContext();
+        context.scan("ru.netology");
         context.refresh();
 
         controller = context.getBean(PostController.class);
@@ -57,6 +58,13 @@ public class MainServlet extends HttpServlet {
 
     private long extractIdFromPath(String path) {
         return Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
+    }
+
+    @Override
+    public void destroy() {
+        if (context != null) {
+            context.close();
+        }
     }
 }
 
